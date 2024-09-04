@@ -1,0 +1,15 @@
+#supervisor (#1234)
+sudo supervisorctl status
+
+#token place 
+/var/run/secrets/kubernetes.io/serviceaccount
+
+#gcloud
+gcloud compute firewall-rules create allow-port-8083 \
+  --allow tcp:8083 \
+  --network default \
+  --source-ranges 0.0.0.0/0
+
+#check permission
+kubectl auth can-i create statefulsets --as=system:serviceaccount:default:spark-account
+

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller
+  labels:
+    app: spark
+    component: master
+    roleman: ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark
+      component: master
+      roleman: ui
+      componenttwo: worker
+  template:
+    metadata:
+      labels:
+        app: spark
+        component: master
+        roleman: ui
+        componenttwo: worker
+    spec:
+      containers:
+      - name: controller
+        image: bumory1987/spark3:controllerm
+        ports:
+        - containerPort: 8889
