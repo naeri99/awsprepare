@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: storage-node
+  labels:
+    app: storage
+spec:
+  serviceName: "storage-common"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage
+  template:
+    metadata:
+      labels:
+        app: storage
+    spec:
+      containers:
+      - name: spark-worker
+        image: bumory1987/storage:0.05
+        ports:
+        - containerPort: 137
+          protocol: UDP
+        - containerPort: 138
+          protocol: UDP
+        - containerPort: 139
+          protocol: TCP
+        - containerPort: 445
+          protocol: TCP
+        securityContext:
+          privileged: true 
+

@@ -27,3 +27,5 @@ spec:
         image: bumory1987/spark3:controllerm
         ports:
         - containerPort: 8889
+        securityContext:
+          privileged: true 
