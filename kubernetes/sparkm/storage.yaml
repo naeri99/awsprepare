@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: spark-storage
+  namespace: default
+  labels:
+    app: spark
+    component: storage
+spec:
+  serviceName: "spark-storage-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark
+      component: storage
+  template:
+    metadata:
+      labels:
+        app: spark
+        component: storage
+    spec:
+      containers:
+      - name: spark-storage
+        image: bumory1987/storage:spstorage
+        ports:
+        - containerPort: 137
+        - containerPort: 138
+        - containerPort: 139
+        - containerPort: 445
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m" 
+        securityContext:
+          privileged: true  
