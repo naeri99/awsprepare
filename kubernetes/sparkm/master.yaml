@@ -7,7 +7,7 @@ metadata:
     app: spark
     component: master
 spec:
-  serviceName: "spark-service"
+  serviceName: "spark-master-service"
   replicas: 1
   selector:
     matchLabels:
@@ -21,17 +21,18 @@ spec:
     spec:
       containers:
       - name: spark-master
-        image: bumory1987/spark3:masterm
+        image: bumory1987/sparks:masterv2
         ports:
         - containerPort: 8083
         - containerPort: 7077
         env:
-        - name: SPARK_MASTER_IP_SUNG
-          value: "spark-master-0.spark-service.default.svc.cluster.local"
+        - name: SPARK_MASTER_HOST
+          value: "spark-master-0.spark-master-service.default.svc.cluster.local"
+        - name: STORAGE
+          value: "spark-storage-0.spark-storage-service.default.svc.cluster.local"
         resources:
           requests:
-            memory: "3Gi"
+            memory: "512Mi"    # Request 512 MB memory
             cpu: "1"
-          limits:
-            memory: "3Gi"
-            cpu: "1"
+        securityContext:
+          privileged: true  

@@ -1,35 +1,35 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: spark-storage
+  name: spark-controller
   namespace: default
   labels:
     app: spark
-    component: storage
+    component: ui
 spec:
-  serviceName: "spark-storage-service"
+  serviceName: "spark-controller-loadbalancer"
   replicas: 1
   selector:
     matchLabels:
       app: spark
-      component: storage
+      component: ui
   template:
     metadata:
       labels:
         app: spark
-        component: storage
+        component: ui
     spec:
       containers:
-      - name: spark-storage
-        image: bumory1987/storage:spstorage
+      - name: spark-controller
+        image: bumory1987/sparks:ui
         ports:
-        - containerPort: 137
-        - containerPort: 138
-        - containerPort: 139
-        - containerPort: 445
+        - containerPort: 8889
+        env:
+        - name: STORAGE
+          value: "spark-storage-0.spark-storage-service.default.svc.cluster.local"  
         resources:
           requests:
             memory: "2Gi"
-            cpu: "500m" 
+            cpu: "1" 
         securityContext:
           privileged: true  
