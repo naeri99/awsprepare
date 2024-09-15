@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-worker-loadbalancer
+  namespace: default
+spec:
+  type: LoadBalancer
+  selector:
+    app: spark
+    component: worker
+  ports:
+  - protocol: TCP
+    port: 8090           
+    targetPort: 8090  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-worker-inner
+  namespace: default
+spec:
+  clusterIP: None
+  selector:
+    app: spark
+    component: worker
+  ports:
+  - name: port-22
+    port: 22
+    targetPort: 22

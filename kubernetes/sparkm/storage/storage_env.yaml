@@ -1,0 +1,29 @@
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-storage-service
+  namespace: default
+spec:
+  clusterIP: None
+  selector:
+    app: spark
+    component: storage
+  ports:
+  - name: netbios-ns
+    protocol: UDP
+    port: 137
+    targetPort: 137
+  - name: netbios-dgm
+    protocol: UDP
+    port: 138
+    targetPort: 138
+  - name: netbios-ssn
+    protocol: TCP
+    port: 139
+    targetPort: 139
+  - name: microsoft-ds
+    protocol: TCP
+    port: 445
+    targetPort: 445   
