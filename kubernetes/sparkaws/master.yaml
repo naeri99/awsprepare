@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: spark-master
+  namespace: default
+  labels:
+    app: spark
+    component: master
+spec:
+  serviceName: "spark-master-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark
+      component: master
+  template:
+    metadata:
+      labels:
+        app: spark
+        component: master
+    spec:
+      containers:
+      - name: spark-master
+        image: bumory1987/sparks:masterv2
+        ports:
+        - containerPort: 8083
+        - containerPort: 7077
+        env:
+        - name: SPARK_MASTER_HOST
+          value: "spark-master-0.spark-master-service.default.svc.cluster.local"
+        - name: STORAGE
+          value: "spark-storage-0.spark-storage-service.default.svc.cluster.local"
+        resources:
+          requests:
+            memory: "2Gi"    # Request 512 MB memory
+            cpu: "2"
+        securityContext:
+          privileged: true  
+

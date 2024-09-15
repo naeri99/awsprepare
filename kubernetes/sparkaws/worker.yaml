@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: spark-worker
+  labels:
+    app: spark
+spec:
+  serviceName: "spark-common"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: spark
+  template:
+    metadata:
+      labels:
+        app: spark
+    spec:
+      containers:
+      - name: spark-worker
+        image: bumory1987/spark3:workerm
+        resources:
+          requests:
+            memory: "3Gi"
+            cpu: "1"
+          limits:
+            memory: "3Gi"
+            cpu: "1"
+        ports:
+        - containerPort: 8090
+        env:
+        - name: SPARK_MASTER_IP_SUNG
+          value: "spark-master-0.spark-master-service.default.svc.cluster.local"  
+        - name: SPARK_MASTER_PORT_SUNG
+          value: "7077"
+        - name: SPARK_MASTER_WEB_PORT_SUNG
+          value: "8083"
+        - name: SPARK_MASTER_WOKER_WEB_SUNG
+          value: "8090"

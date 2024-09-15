@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-common
+  namespace: default
+spec:
+  clusterIP: None
+  selector:
+    app: spark
+  ports:
+  - name: port-22
+    port: 22
+    targetPort: 22
