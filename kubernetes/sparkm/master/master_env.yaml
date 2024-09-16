@@ -10,7 +10,7 @@ spec:
     app: spark
     component: master
   ports:
-  - name: port-9093
+  - name: port-7077
     port: 7077
     targetPort: 7077
   - name: port-8083
@@ -31,4 +31,3 @@ spec:
   - protocol: TCP
     port: 8083           
     targetPort: 8083     
----

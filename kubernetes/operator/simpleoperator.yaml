@@ -11,17 +11,3 @@ spec:
   containers:
   - name: ubuntu
     image: bumory1987/ubuntu:0.04
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: manager-service
-  namespace: default
-spec:
-  type: LoadBalancer
-  selector:
-    main: manager
-  ports:
-  - protocol: TCP
-    port: 10012           
-    targetPort: 22     
