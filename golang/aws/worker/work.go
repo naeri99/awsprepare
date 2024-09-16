@@ -46,7 +46,7 @@ func createWorkerEnv(clientset *kubernetes.Clientset) {
 				Annotations: map[string]string{
 					"service.beta.kubernetes.io/aws-load-balancer-nlb-target-type":                   "ip",
 					"service.beta.kubernetes.io/aws-load-balancer-scheme":                            "internet-facing",
-					"service.beta.kubernetes.io/aws-load-balancer-healthcheck-port":                  "8080",
+					"service.beta.kubernetes.io/aws-load-balancer-healthcheck-port":                  "8090",
 					"service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled": "true",
 				},
 			},

@@ -32,9 +32,9 @@ func deleteCluster(){
 
 func main() {
     
-    //generateCluster()
+    generateCluster()
     
-    deleteCluster()
+    //deleteCluster()
 
     fmt.Println("finish")
 }
