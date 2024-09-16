@@ -26,7 +26,7 @@ resource "aws_instance" "test-ec2-bastion" {
   hibernation                          = "false"
 
   instance_initiated_shutdown_behavior = "stop"
-  instance_type                        = "t2.micro"
+  instance_type                        = "t2.medium"
   ipv6_address_count                   = "0"
   metadata_options {
     http_endpoint               = "enabled"
