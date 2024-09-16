@@ -2,8 +2,9 @@ package worker
 
 import (
 	"context"
+	"fmt"
 	"log"
-        "fmt"
+
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -13,7 +14,7 @@ import (
 )
 
 func createWorkerEnv(clientset *kubernetes.Clientset) {
-
+	loadBalancerClass := "service.k8s.aws/nlb"
 	services := []*v1.Service{
 		{
 
@@ -42,9 +43,17 @@ func createWorkerEnv(clientset *kubernetes.Clientset) {
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "spark-worker-loadbalancer",
 				Namespace: "default",
+				Annotations: map[string]string{
+					"service.beta.kubernetes.io/aws-load-balancer-nlb-target-type":                   "ip",
+					"service.beta.kubernetes.io/aws-load-balancer-scheme":                            "internet-facing",
+					"service.beta.kubernetes.io/aws-load-balancer-healthcheck-port":                  "8080",
+					"service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled": "true",
+				},
 			},
 			Spec: v1.ServiceSpec{
-				Type: v1.ServiceTypeLoadBalancer,
+				Type:              v1.ServiceTypeLoadBalancer,
+				LoadBalancerClass: &loadBalancerClass, // Use the pointer to the string
+
 				Selector: map[string]string{
 					"app":       "spark",
 					"component": "worker",
@@ -161,18 +170,18 @@ func deleteWrokerStatefulSet(clientset *kubernetes.Clientset) {
 
 	err := clientset.AppsV1().StatefulSets(namespace).Delete(context.TODO(), statefulSetName, metav1.DeleteOptions{})
 	if err != nil {
-                fmt.Printf("StatefulSet %s not found\n", statefulSetName)
-        }else{
-                fmt.Printf("StatefulSet %s deleted\n", statefulSetName)
-        }
+		fmt.Printf("StatefulSet %s not found\n", statefulSetName)
+	} else {
+		fmt.Printf("StatefulSet %s deleted\n", statefulSetName)
+	}
 }
 
 func deleteWorkerEnvSet(clientset *kubernetes.Clientset, target string, namespace string) {
-        
+
 	err := clientset.CoreV1().Services(namespace).Delete(context.TODO(), target, metav1.DeleteOptions{})
 	if err != nil {
 		fmt.Printf("service %s not found\n", target)
-	}else{
+	} else {
 		fmt.Printf("service %s deleted\n", target)
 	}
 }
@@ -197,10 +206,6 @@ func DeletingWorker(clientset *kubernetes.Clientset, preoreder chan interface{})
 	return signal
 }
 
-
-
-
-
 func int32Ptr(i int32) *int32 { return &i }
 
 func boolPtr(b bool) *bool { return &b }
@@ -216,4 +221,3 @@ func DeployingWorker(clientset *kubernetes.Clientset, preoreder chan interface{}
 	}(preoreder, signal, clientset)
 	return signal
 }
-

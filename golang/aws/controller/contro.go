@@ -2,8 +2,9 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"log"
-        "fmt"
+
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -13,6 +14,7 @@ import (
 )
 
 func createControllEnv(clientset *kubernetes.Clientset) {
+	loadBalancerClass := "service.k8s.aws/nlb"
 
 	services := []*v1.Service{
 		{
@@ -20,9 +22,16 @@ func createControllEnv(clientset *kubernetes.Clientset) {
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "spark-controller-loadbalancer",
 				Namespace: "default",
+				Annotations: map[string]string{
+					"service.beta.kubernetes.io/aws-load-balancer-nlb-target-type":                   "ip",
+					"service.beta.kubernetes.io/aws-load-balancer-scheme":                            "internet-facing",
+					"service.beta.kubernetes.io/aws-load-balancer-healthcheck-port":                  "8080",
+					"service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled": "true",
+				},
 			},
 			Spec: v1.ServiceSpec{
-				Type: v1.ServiceTypeLoadBalancer,
+				Type:              v1.ServiceTypeLoadBalancer,
+				LoadBalancerClass: &loadBalancerClass,
 				Selector: map[string]string{
 					"app":       "spark",
 					"component": "ui",
@@ -116,17 +125,17 @@ func createSparkControllStatefulSet(clientset *kubernetes.Clientset) {
 	log.Println("Successfully created StatefulSet: spark-storage")
 }
 
-func deleteControlStatefulSet(clientset *kubernetes.Clientset){
+func deleteControlStatefulSet(clientset *kubernetes.Clientset) {
 	statefulSetName := "spark-controller"
 	namespace := "default"
 
 	err := clientset.AppsV1().StatefulSets(namespace).Delete(context.TODO(), statefulSetName, metav1.DeleteOptions{})
 	if err != nil {
-                fmt.Printf("StatefulSet %s not found\n", statefulSetName)
-        }else{
-                fmt.Printf("StatefulSet %s deleted\n", statefulSetName)
-        }
-	
+		fmt.Printf("StatefulSet %s not found\n", statefulSetName)
+	} else {
+		fmt.Printf("StatefulSet %s deleted\n", statefulSetName)
+	}
+
 }
 
 func deleteControlEnv(clientset *kubernetes.Clientset) {
@@ -135,13 +144,11 @@ func deleteControlEnv(clientset *kubernetes.Clientset) {
 
 	err := clientset.CoreV1().Services(namespace).Delete(context.TODO(), serviceName, metav1.DeleteOptions{})
 	if err != nil {
-                fmt.Printf("service %s not found\n", serviceName)
-        }else{
-                fmt.Printf("service %s deleted\n", serviceName)
-        }
+		fmt.Printf("service %s not found\n", serviceName)
+	} else {
+		fmt.Printf("service %s deleted\n", serviceName)
+	}
 }
-
-
 
 func int32Ptr(i int32) *int32 { return &i }
 
@@ -160,13 +167,11 @@ func DeployingController(clientset *kubernetes.Clientset, preoreder chan interfa
 }
 
 func DeletingController(clientset *kubernetes.Clientset) chan interface{} {
-        signal := make(chan interface{})
-        go func(sp chan interface{}, clientset *kubernetes.Clientset) {
-                deleteControlStatefulSet(clientset)
-                deleteControlEnv(clientset)
-                sp <- 1
-        }(signal, clientset)
-        return signal
+	signal := make(chan interface{})
+	go func(sp chan interface{}, clientset *kubernetes.Clientset) {
+		deleteControlStatefulSet(clientset)
+		deleteControlEnv(clientset)
+		sp <- 1
+	}(signal, clientset)
+	return signal
 }
-
-
