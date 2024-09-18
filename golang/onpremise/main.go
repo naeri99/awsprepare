@@ -7,6 +7,7 @@ import (
     "operation/master"
     "operation/worker"
     "operation/controller"
+    "operation/backend"
 )
 
 func generateCluster(){
@@ -31,10 +32,10 @@ func deleteCluster(){
 }
 
 func main() {
-    
+    backend.StartRouter()
     //generateCluster()
     
-    deleteCluster()
+    //deleteCluster()
 
     fmt.Println("finish")
 }
