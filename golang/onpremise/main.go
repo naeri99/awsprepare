@@ -1,11 +1,10 @@
-package main 
+package main
 
 import (
-    "fmt"
-    "operation/backend"
+	"operation/backend"
 )
 
 func main() {
-    backend.StartRouter()
-   
+	backend.StartRouter()
+
 }

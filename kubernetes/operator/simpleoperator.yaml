@@ -10,4 +10,4 @@ spec:
   serviceAccountName: spark-account  
   containers:
   - name: ubuntu
-    image: bumory1987/ubuntu:0.04
+    image: bumory1987/ubuntu:0.06
