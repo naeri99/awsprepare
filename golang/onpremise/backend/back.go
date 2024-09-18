@@ -4,7 +4,34 @@ import (
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
     "time"
+    "operation/login"
+    "operation/storage"
+    "operation/master"
+    "operation/worker"
+    "operation/controller"
 )
+
+func generateCluster(){
+    clientset:= login.GetClient()
+    firstprocess := storage.Deploying(clientset)
+    secondprocess := master.DeployingMaster(clientset,firstprocess)
+    thirdprocess := worker.DeployingWorker(clientset,secondprocess )
+    fourprocess := controller.DeployingController(clientset,thirdprocess )
+    // Wait for the process to complete
+    <- fourprocess
+    close(fourprocess)
+}
+
+func deleteCluster(){
+    clientset:= login.GetClient()
+    firstdelete := controller.DeletingController(clientset)
+    seconddelete := worker.DeletingWorker(clientset, firstdelete )
+    thirddelete := master.DeletingMaster(clientset,seconddelete )
+    fourdelete := storage.DeletingStorage(clientset, thirddelete)
+    <-fourdelete
+    close(fourdelete)
+}
+
 
 type RequestBody struct {
     Message string `json:"message"`
@@ -30,10 +57,12 @@ func StartRouter() {
     })
 
     router.GET("/create", func(c *gin.Context) {
+	generateCluster()
         c.String(200, "create\n")
     })
 
     router.GET("/delete", func(c *gin.Context) {
+	deleteCluster()
         c.String(200, "delete\n")
     })
 
@@ -52,6 +81,6 @@ func StartRouter() {
     })
 
     // Start the server on port 8080
-    router.Run(":8080")
+    router.Run(":8070")
 }
 
