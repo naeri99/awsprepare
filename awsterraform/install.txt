@@ -83,8 +83,9 @@ aws iam create-policy \
 
 eksctl delete iamserviceaccount aws-load-balancer-controller --namespace=kube-system --cluster=test-eks-cluster
 
-eksctl create iamserviceaccount --cluster=test-eks-cluster --namespace=kube-system --name=aws-load-balancer-controller --attach-policy-arn=arn:aws:iam::941377122395:policy/AWSLoadBalancerControllerIAMPolicy --approve
+eksctl create iamserviceaccount --cluster=test-eks-cluster --namespace=kube-system --name=aws-load-balancer-controller --attach-policy-arn=arn:aws:iam::941377122395:policy/AWSLoadBalancerControllerIAMPolicy --approve --override-existing-serviceaccounts
 
+eksctl create iamserviceaccount --cluster=test-eks-cluster --namespace=kube-system --name=aws-load-balancer-controller --attach-policy-arn=arn:aws:iam::941377122395:policy/AWSLoadBalancerControllerIAMPolicy --approve 
 
 
 
