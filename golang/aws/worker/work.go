@@ -94,7 +94,7 @@ func createSparkWorkerStatefulSet(clientset *kubernetes.Clientset) {
 			},
 		},
 		Spec: appsv1.StatefulSetSpec{
-			ServiceName: "spark-worker-service",
+			ServiceName: "spark-worker-inner",
 			Replicas:    int32Ptr(3),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
