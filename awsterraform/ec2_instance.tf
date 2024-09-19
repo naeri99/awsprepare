@@ -5,7 +5,7 @@ resource "aws_instance" "test-ec2-bastion" {
   availability_zone           = "ap-northeast-2a"
 
   iam_instance_profile        = aws_iam_instance_profile.test-ec2-instance-profile.name
-  key_name                    = "emr-cluster"
+  key_name                    = "testeks"
 
   capacity_reservation_specification {
     capacity_reservation_preference = "open"
